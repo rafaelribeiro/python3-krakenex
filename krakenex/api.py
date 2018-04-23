@@ -30,6 +30,8 @@ import base64
 
 from . import version
 
+from db.security import IncrementOnlyNonce
+
 class API(object):
     """ Maintains a single session between this machine and Kraken.
 
@@ -198,7 +200,8 @@ class API(object):
         :returns: an always-increasing unsigned integer (up to 64 bits wide)
 
         """
-        return int(1000*time.time())
+        nonce = IncrementOnlyNonce.get_nonce('kraken')
+        return nonce
 
     def _sign(self, data, urlpath):
         """ Sign request data according to Kraken's scheme.
